@@ -8,6 +8,10 @@
 
 # --- SEGMENT CUSTOMERS IN 2014 AND 2015 -------------------
 
+#displays your working directory
+getwd()
+#sets directory
+setwd("../DELL/projects/business_analytics")
 
 # Load text file into local variable called 'data'
 data = read.delim(file = 'purchases.txt', header = FALSE, sep = '\t', dec = '.')
@@ -96,7 +100,11 @@ print(segments)
 
 # Compute for each an every period
 for (i in 2:11) {
+
    segments[, i] = segments[, i-1] %*% transition
+
+   segments[8, i]=1000
+
 }
 
 # Plot inactive, active high value customers over time
@@ -146,3 +154,4 @@ barplot(disc_cumulated_revenue)
 
 # What is the database worth?
 print(disc_cumulated_revenue[11] - yearly_revenue[1])
+

@@ -8,6 +8,10 @@
 
 # --- COMPUTING PREDICTORS AND TARGET VARIABLES ------------
 
+#displays your working directory
+getwd()
+#sets directory
+setwd("../DELL/projects/business_analytics")
 
 # Load text file into local variable called 'data'
 data = read.delim(file = 'purchases.txt', header = FALSE, sep = '\t', dec = '.')
@@ -55,7 +59,7 @@ summary(in_sample)
 
 # Calibrate probability model
 library(nnet)
-prob.model = multinom(formula = active_2015 ~ recency + first_purchase + frequency + avg_amount + max_amount,
+prob.model = multinom(formula = active_2015 ~ recency + log(recency) + first_purchase + frequency + log(frequency) + avg_amount + max_amount,
                       data = in_sample)
 coef = summary(prob.model)$coefficients
 std  = summary(prob.model)$standard.errors
@@ -107,3 +111,11 @@ hist(customers_2015$score_predicted)
 # How many customers have an expected revenue of more than $50
 z = which(customers_2015$score_predicted > 50)
 print(length(z))
+
+
+# install.packages("tidyverse")
+# library(tidyverse)
+
+# customers_dplyr <- data %>% 
+#   group_by(customer_id) %>%
+#   summarise(recency = min(days_since), frequency = n(), amount = mean(purchase_amount))

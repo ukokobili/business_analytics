@@ -10,13 +10,11 @@
 # --- COMPUTING RECENCY, FREQUENCY, MONETARY VALUE ---------
 
 #displays your working directory
-getwd() 
-
+getwd()
 #sets directory
-setwd("../DELL/projects/business_analytics") 
-
+setwd("../DELL/projects/business_analytics")
 # Load text file into local variable called 'data'
-data = read.delim(file = 'purchases.txt', header = FALSE, sep = '\t', dec = '.')
+data = read.delim(file = 'purchases.txt', header = FALSE, sep ='\t', dec ='.')
 
 # Add headers and interpret the last column as a date, extract year of purchase
 colnames(data) = c('customer_id', 'purchase_amount', 'date_of_purchase')
@@ -63,6 +61,7 @@ head(new_data)
 
 # Take the log-transform of the frequency, and plot
 new_data$frequency = log(new_data$frequency)
+new_data$amount = log(new_data$amount)
 hist(new_data$frequency)
 
 # Standardize variables

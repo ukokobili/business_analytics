@@ -8,6 +8,10 @@
 
 # --- COMPUTING RECENCY, FREQUENCY, MONETARY VALUE ---------
 
+getwd() 
+
+#sets directory
+setwd("../DELL/projects/business_analytics") 
 
 # Load text file into local variable called 'data'
 data = read.delim(file = 'purchases.txt', header = FALSE, sep = '\t', dec = '.')
@@ -70,8 +74,8 @@ aggregate(x = customers_2015[, 2:5], by = list(customers_2015$segment), mean)
 # More complex 4-segment solution using which
 customers_2015$segment = "NA"
 customers_2015$segment[which(customers_2015$recency > 365*3)] = "inactive"
-customers_2015$segment[which(customers_2015$recency <= 365*3 & customers_2015$recency > 365*2)] = "cold"
-customers_2015$segment[which(customers_2015$recency <= 365*2 & customers_2015$recency > 365*1)] = "warm"
+customers_2015$segment[which(customers_2015$recency <= 365*3 & customers_2015$recency > 365*2)] = "cold" # nolint # nolint
+customers_2015$segment[which(customers_2015$recency <= 365*2 & customers_2015$recency > 365*1)] = "warm" # nolint
 customers_2015$segment[which(customers_2015$recency <= 365)] = "active"
 table(customers_2015$segment)
 aggregate(x = customers_2015[, 2:5], by = list(customers_2015$segment), mean)
@@ -79,22 +83,24 @@ aggregate(x = customers_2015[, 2:5], by = list(customers_2015$segment), mean)
 # Complete segment solution using which, and exploiting previous test as input
 customers_2015$segment = "NA"
 customers_2015$segment[which(customers_2015$recency > 365*3)] = "inactive"
-customers_2015$segment[which(customers_2015$recency <= 365*3 & customers_2015$recency > 365*2)] = "cold"
-customers_2015$segment[which(customers_2015$recency <= 365*2 & customers_2015$recency > 365*1)] = "warm"
+customers_2015$segment[which(customers_2015$recency <= 365*3 & customers_2015$recency > 365*2)] = "cold" # nolint
+customers_2015$segment[which(customers_2015$recency <= 365*2 & customers_2015$recency > 365*1)] = "warm" # nolint
 customers_2015$segment[which(customers_2015$recency <= 365)] = "active"
-customers_2015$segment[which(customers_2015$segment == "warm" & customers_2015$first_purchase <= 365*2)] = "new warm"
-customers_2015$segment[which(customers_2015$segment == "warm" & customers_2015$amount < 100)] = "warm low value"
-customers_2015$segment[which(customers_2015$segment == "warm" & customers_2015$amount >= 100)] = "warm high value"
-customers_2015$segment[which(customers_2015$segment == "active" & customers_2015$first_purchase <= 365)] = "new active"
-customers_2015$segment[which(customers_2015$segment == "active" & customers_2015$amount < 100)] = "active low value"
-customers_2015$segment[which(customers_2015$segment == "active" & customers_2015$amount >= 100)] = "active high value"
+customers_2015$segment[which(customers_2015$segment == "warm" & customers_2015$first_purchase <= 365*2)] = "new warm" # nolint
+customers_2015$segment[which(customers_2015$segment == "warm" & customers_2015$amount < 100)] = "warm low value" # nolint # nolint
+customers_2015$segment[which(customers_2015$segment == "warm" & customers_2015$amount >= 100)] = "warm high value" # nolint
+customers_2015$segment[which(customers_2015$segment == "active" & customers_2015$first_purchase <= 365)] = "new active" # nolint
+customers_2015$segment[which(customers_2015$segment == "active" & customers_2015$amount < 100)] = "active low value" # nolint
+customers_2015$segment[which(customers_2015$segment == "new active" & customers_2015$amount >= 100)] = "new active high" #nolint
+customers_2015$segment[which(customers_2015$segment == "new active" & customers_2015$amount < 100)] = "new active low" #nolint
+customers_2015$segment[which(customers_2015$segment == "active" & customers_2015$amount >= 100)] = "active high value" # nolint
 table(customers_2015$segment)
 aggregate(x = customers_2015[, 2:5], by = list(customers_2015$segment), mean)
 
 # Re-order factor in a way that makes sense
-customers_2015$segment = factor(x = customers_2015$segment, levels = c("inactive", "cold",
-                                                             "warm high value", "warm low value", "new warm",
-                                                             "active high value", "active low value", "new active"))
+customers_2015$segment = factor(x = customers_2015$segment, levels = c("inactive", "cold", # nolint
+                                                             "warm high value", "warm low value", "new warm", # nolint
+                                                             "active high value", "active low value", "new active", "new active low", "new active high")) # nolint
 table(customers_2015$segment)
 aggregate(x = customers_2015[, 2:5], by = list(customers_2015$segment), mean)
 
@@ -118,20 +124,22 @@ customers_2014 = sqldf("SELECT customer_id,
 # Complete segment solution using which, and exploiting previous test as input
 customers_2014$segment = "NA"
 customers_2014$segment[which(customers_2014$recency > 365*3)] = "inactive"
-customers_2014$segment[which(customers_2014$recency <= 365*3 & customers_2014$recency > 365*2)] = "cold"
+customers_2014$segment[which(customers_2014$recency <= 365*3 & customers_2014$recency > 365*2)] = "cold" # nolint
 customers_2014$segment[which(customers_2014$recency <= 365*2 & customers_2014$recency > 365*1)] = "warm"
 customers_2014$segment[which(customers_2014$recency <= 365)] = "active"
 customers_2014$segment[which(customers_2014$segment == "warm" & customers_2014$first_purchase <= 365*2)] = "new warm"
 customers_2014$segment[which(customers_2014$segment == "warm" & customers_2014$amount < 100)] = "warm low value"
 customers_2014$segment[which(customers_2014$segment == "warm" & customers_2014$amount >= 100)] = "warm high value"
 customers_2014$segment[which(customers_2014$segment == "active" & customers_2014$first_purchase <= 365)] = "new active"
+customers_2014$segment[which(customers_2014$segment == "new active" & customers_2014$amount >= 100)] = "new active high"
+customers_2014$segment[which(customers_2014$segment == "new active" & customers_2014$amount < 100)] = "new active low"
 customers_2014$segment[which(customers_2014$segment == "active" & customers_2014$amount < 100)] = "active low value"
-customers_2014$segment[which(customers_2014$segment == "active" & customers_2014$amount >= 100)] = "active high value"
+customers_2014$segment[which(customers_2014$segment == "active" & customers_2014$amount >= 100)] = "active high value" # nolint
 
 # Re-order factor in a way that makes sense
 customers_2014$segment = factor(x = customers_2014$segment, levels = c("inactive", "cold",
                                                                        "warm high value", "warm low value", "new warm",
-                                                                       "active high value", "active low value", "new active"))
+                                                                       "active high value", "active low value", "new active", "new active high", "new active low"))
 
 # Show segmentation results
 table(customers_2014$segment)
